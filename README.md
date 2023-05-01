@@ -4,7 +4,7 @@ Deploy a turnkey Jitsi instance in Hetzner cloud within minutes including:
 - a named chairman that starts meetings (anonymous meetings disabled)
 - meeting recording
 
-Without recording CPX11 is fine
+Without recording CPX11 is fine  
 With recording go for CPX41
 
 
