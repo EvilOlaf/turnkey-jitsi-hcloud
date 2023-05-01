@@ -1,5 +1,5 @@
 #!/bin/bash
-# hcloud server create --datacenter 4 --image 40093140 --name jitsi1 --type cpx41 --primary-ipv4 12345678 --primary-ipv6 12345679
+# hcloud server create --datacenter 4 --image 40093140 --name jitsi1 --type cpx41 --primary-ipv4 12345678 --primary-ipv6 12345679 --user-data-from-file cloud-init.sh
 
 export DOMAIN=your.own.domain.example.com
 export EMAIL=youremail@example.com
