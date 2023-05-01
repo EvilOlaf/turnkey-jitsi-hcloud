@@ -5,4 +5,4 @@ Deploy a turnkey Jitsi instance in Hetzner cloud within minutes including:
 - meeting recording
 
 
-The idea behind and requirents are here: [https://zuckerbude.org/hetzner-jitsi/]
+The idea behind and requirents are here: https://zuckerbude.org/hetzner-jitsi/
