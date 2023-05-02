@@ -17,23 +17,23 @@ export CHAIRPW=arandompassword
 #######################################
 
 
-# Begin default config.
+### Begin default config.
+# Create random passwords for internal accounts
 JIBRIPW="$(cat /dev/urandom | tr -dc a-zA-Z | head -c10)"
 RECORDERPW="$(cat /dev/urandom | tr -dc a-zA-Z | head -c10)"
 
-#dirty hacks around hetzner script
+# Dirty hacks to work around Hetzner script user interactions
 sed -i -e 's/.*read\ -p\ \"Is.*$/break/g' /opt/hcloud/jitsi_setup.sh
 sed -i -e 's/.*read\ -p\ \"Note.*$/le=n/g' /opt/hcloud/jitsi_setup.sh
 export DEBIAN_FRONTEND=noninteractive
 export domain=$DOMAIN; /opt/hcloud/jitsi_setup.sh
 /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $DOMAIN
-# exit 0 # Uncomment here if you do neither want to use authentication for host nor recording.
+# exit 0 # Uncomment here if you do neither want to use authentication for the meeting host nor recording. Just plain Jitsi with default settings.
 # End default config.
 
+### Begin configuration for authentication
 apt update
 apt upgrade -y
-
-# Begin configuration for authentication
 sed -i 's/jitsi-anonymous/internal_hashed/g' /etc/prosody/conf.avail/$DOMAIN.cfg.lua 
 sed -i "/recorder.$DOMAIN/a VirtualHost \"guest.$DOMAIN\"\n\ \ authentication = \"anonymous\"\n\ \ c2s_require_encryption = false" /etc/prosody/conf.avail/$DOMAIN.cfg.lua
 sed -i -e "s/.*anonymousdomain.*/\ \ \ \ \ \ \ \ anonymousdomain:\ \x27guest.$DOMAIN\x27,/g" /etc/jitsi/meet/$DOMAIN-config.js
@@ -46,7 +46,8 @@ systemctl restart jitsi-videobridge2
 # exit 0 # Uncomment here if you want authentication but do not need recording.
 # End configuration for authentication
 
-# Begin recording configuration
+### Begin recording configuration
+# Check README.md why I install a new kernel here
 apt install linux-image-generic-hwe-20.04 -y
 echo "snd-aloop" >> /etc/modules
 curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add

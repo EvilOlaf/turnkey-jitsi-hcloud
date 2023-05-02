@@ -39,6 +39,7 @@ For recording however we need much more power since video encoding will be done 
 - `--user-data-from-file` pass all the commands in the script to cloud-init to be executed immediately after server creation.
 
 The setup process takes about 5 minutes after command was entered. The cloud server will restart once setup is complete. Until then just leave it or watch the process by checking `/var/log/cloud-init-output.log`.  
+**ATTENTION**: If you login while the setup is performing you might be greeted with the Hetzner Jitsi install script asking for a domain name. DO NOT ENTER ANYTHING. Simply hit ^C (CTRL+C) to drop into shell.
 
 After that you should be able to navigate to https://your.domain and once you start a meeting you can login with the credentials defined in the script earlier.
 
@@ -64,3 +65,8 @@ For example. A CPX41 instance cost is about 4ct/hour. This adds up to 28€ per 
 ### Closing
 
 I published the early stage and idea on my website: https://zuckerbude.org/hetzner-jitsi/
+
+### Some technical details or DAFUQ DID YOU DO!?
+
+- By default the Hetzner Jitsi install script does the certbot stuff as well but as you can see I decided against hacking around it (see `sed -i -e 's/.*read\ -p\ \"Note.*$/le=n/g'`). The reason is that the nice guys included the option to issue the certificate later on using the `install-letsencrypt-cert.sh` which allows the usage of parameters.
+- The default kernel oddly does not come with `snd-aloop` module even though it is configured in the config file. I decided to not waste time for research but simply install the latest Focal hwe generic kernel which has everything I needed. This is also the reason why the restart is necessary.
