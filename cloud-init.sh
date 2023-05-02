@@ -1,16 +1,23 @@
 #!/bin/bash
-# hcloud server create --datacenter 4 --image 40093140 --name jitsi1 --type cpx41 --primary-ipv4 12345678 --primary-ipv6 12345679 --user-data-from-file cloud-init.sh
+# Example: hcloud server create --datacenter 4 --image 40093140 --name jitsi1 --type cpx41 --primary-ipv4 12345678 --primary-ipv6 12345679 --user-data-from-file cloud-init.sh
 
+# Set domain that will be used later. Double check its correctness.
 export DOMAIN=your.own.domain.example.com
+
+# Set email address to be used for LetsEncrypt issue.
 export EMAIL=youremail@example.com
 
+# Set a username and password as login credentials for the meeting host.
 export CHAIRNAME=yournickname
 export CHAIRPW=arandompassword
 
 
 #######################################
+# DO NOT EDIT BELOW....or do and enhance it, fix things or break it. I don't care...
+#######################################
 
-# start public config
+
+# Begin default config.
 JIBRIPW="$(cat /dev/urandom | tr -dc a-zA-Z | head -c10)"
 RECORDERPW="$(cat /dev/urandom | tr -dc a-zA-Z | head -c10)"
 
@@ -19,13 +26,14 @@ sed -i -e 's/.*read\ -p\ \"Is.*$/break/g' /opt/hcloud/jitsi_setup.sh
 sed -i -e 's/.*read\ -p\ \"Note.*$/le=n/g' /opt/hcloud/jitsi_setup.sh
 export DEBIAN_FRONTEND=noninteractive
 export domain=$DOMAIN; /opt/hcloud/jitsi_setup.sh
-#/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $DOMAIN
-# end public config
+/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $DOMAIN
+# exit 0 # Uncomment here if you do neither want to use authentication for host nor recording.
+# End default config.
 
 apt update
 apt upgrade -y
 
-# start enable auth
+# Begin configuration for authentication
 sed -i 's/jitsi-anonymous/internal_hashed/g' /etc/prosody/conf.avail/$DOMAIN.cfg.lua 
 sed -i "/recorder.$DOMAIN/a VirtualHost \"guest.$DOMAIN\"\n\ \ authentication = \"anonymous\"\n\ \ c2s_require_encryption = false" /etc/prosody/conf.avail/$DOMAIN.cfg.lua
 sed -i -e "s/.*anonymousdomain.*/\ \ \ \ \ \ \ \ anonymousdomain:\ \x27guest.$DOMAIN\x27,/g" /etc/jitsi/meet/$DOMAIN-config.js
@@ -35,9 +43,10 @@ prosodyctl register $CHAIRNAME $DOMAIN $CHAIRPW
 systemctl restart prosody
 systemctl restart jicofo
 systemctl restart jitsi-videobridge2
-# end enable auth
+# exit 0 # Uncomment here if you want authentication but do not need recording.
+# End configuration for authentication
 
-# start enable recording
+# Begin recording configuration
 apt install linux-image-generic-hwe-20.04 -y
 echo "snd-aloop" >> /etc/modules
 curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
@@ -177,6 +186,7 @@ default-call-empty-timeout = 30 seconds
    }
 }
 EOF
+systemctl enable jibri
 
 # TODO: Write upload
 cat > /upload.sh << EOF
@@ -184,9 +194,9 @@ cat > /upload.sh << EOF
 echo add automatic uploading of meeting file to somewhere at the end
 exit 0
 EOF
-# end enable recording
+# End recording configuration
 
-# some system stuff
+# Add swap and reboot
 systemctl enable jibri
 fallocate -l 2G /swap
 mkswap /swap
@@ -194,4 +204,3 @@ chmod 600 /swap
 swapon /swap
 echo "/swap    none    swap    sw      0 0" >> /etc/fstab
 reboot now
-
