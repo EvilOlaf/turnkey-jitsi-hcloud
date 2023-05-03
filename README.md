@@ -2,7 +2,7 @@
 
 
 ## tl;dr
-Turnkey Jitsi instance in Hetzner cloud with existing IPs/Domain for spontaneous meetings.
+Turnkey Jitsi instance in Hetzner cloud with existing IPs/Domain for spontaneous recurring meetings.
 
 - Comes with anonymous meetings disabled, login credentials for the host
 - Comes with recording feature enabled
@@ -16,9 +16,9 @@ Turnkey Jitsi instance in Hetzner cloud with existing IPs/Domain for spontaneous
 
 ### First time setup
 
-- To go your Hetzner cloud panel and create both a primary IPv4 address and IPv6 address (we will use `::1` here). I recommend to active protection for both to avoid accidental deletion on instance removal.
-- Once that is done create identical A and AAAA records for the desired domain to these IP addresses.  
-- Now you need the `hcloud` tool. After activating it with a token grab the IDs of your IP addresses as we will need them later.  
+- To go your Hetzner cloud panel and create both a primary IPv4 address and IPv6 address. I recommend to activate protection for both to avoid accidental deletion on instance removal.
+- Once that is done create identical A and AAAA records. Use the first address of your /64 prefix, `::1` to say, for latter.
+- Now you need the `hcloud` tool. After activating it with a token lookup the IDs of your IP addresses as you will need them later.  
 For reference check here: <https://github.com/hetznercloud/cli>
 
 __Make sure the lookup for your DNS records works before you proceed.__ Have a big cup of coffee, go for a walk or sleep a night over.
@@ -26,10 +26,14 @@ __Make sure the lookup for your DNS records works before you proceed.__ Have a b
 Download the `cloud-init.sh` from this repository and make adjustments as you like.
 Then start the deployment.  
 
-```
+```bash
+# replace IDs for your IP addresses
 hcloud server create --datacenter 4 --image 40093140 --name jitsi1 --type cpx41 --primary-ipv4 12345678 --primary-ipv6 12345679 --user-data-from-file cloud-init.sh
 ```
 
+<details>
+  <summary>Command breakdown</summary>
+  
 - `--datacenter` replace the ID if you want a datacenter closer to you, like in the United States. `4` is Falkenstein, Germany.  
 - `--image` at the moment of creating this script 40093140 was the app image for Jitsi on amd64 architecture.  
 - `--name` A random name for your server.  
@@ -38,12 +42,17 @@ For recording however we need much more power since video encoding will be done 
 - `--primary-ipv4` and `--primary-ipv6` are the IDs of your IP addresses you configured beforehand.  
 - `--user-data-from-file` pass all the commands in the script to cloud-init to be executed immediately after server creation.
 
+</details>  
+  
+  
 The setup process takes about 5 minutes after command was entered. The cloud server will restart once setup is complete. Until then just leave it or watch the process by checking `/var/log/cloud-init-output.log`.  
-**ATTENTION**: If you login while the setup is performing you might be greeted with the Hetzner Jitsi install script asking for a domain name. DO NOT ENTER ANYTHING. Simply hit ^C (CTRL+C) to drop into shell.
+
+**ATTENTION**: If you login while the setup is performing you might be greeted with the Hetzner Jitsi install script asking for a domain name. DO NOT ENTER ANYTHING. Simply hit `^C` (CTRL+C) to drop into shell.
 
 After that you should be able to navigate to https://your.domain and once you start a meeting you can login with the credentials defined in the script earlier.
 
-Once your meeting is done use `hcloud server delete 123456789` to get rid of the instance. If you did a recording download it beforehand like with `scp`.
+Once your meeting is done use `hcloud server delete 123456789` to get rid of the instance. If you did a recording download it beforehand like with `scp`.  
+Use `hcloud server list` to determ the instance ID.
 
 ### Recurring setup
 
