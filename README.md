@@ -77,5 +77,5 @@ I published the early stage and idea on my website: https://zuckerbude.org/hetzn
 
 ### Some technical details or DAFUQ DID YOU DO!?
 
-- By default the Hetzner Jitsi install script does the certbot stuff as well but as you can see I decided against hacking around it (see `sed -i -e 's/.*read\ -p\ \"Note.*$/le=n/g'`). The reason is that the nice guys included the option to issue the certificate later on using the `install-letsencrypt-cert.sh` which allows the usage of parameters.
+- By default the Hetzner Jitsi install script does the certbot stuff as well but as you can see I decided against and hacked around it (see `sed -i -e 's/.*read\ -p\ \"Note.*$/le=n/g'`). The reason is that the nice guys included the option to issue the certificate later on using `install-letsencrypt-cert.sh` which allows the usage of parameters.
 - The default kernel oddly does not come with `snd-aloop` module even though it is configured in the config file. I decided to not waste time for research but simply install the latest Focal hwe generic kernel which has everything I needed. This is also the reason why the restart is necessary.
