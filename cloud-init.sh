@@ -189,12 +189,37 @@ default-call-empty-timeout = 30 seconds
 EOF
 systemctl enable jibri
 
-# TODO: Write upload
+
+    # Prepare upload
+    # There are many ways to automate extraction of recorded meetings. This is just an (ugly) example via SSH/SCP.
+    # Feel free to send examples for things like curl or whatever
+cat > /upload.privkey << EOF
+-----BEGIN OPENSSH PRIVATE KEY-----
+add a private key w/o password here
+-----END OPENSSH PRIVATE KEY-----
+EOF
+
+chmod 600 /upload.privkey
+
 cat > /upload.sh << EOF
 #!/bin/bash
-echo add automatic uploading of meeting file to somewhere at the end
+exit 0 # remove this line if you actually want to use this. Also edit private key above
+       # and prepare proper(ly isolated/restricted) destination.
+
+RECDIR=$1 # this is being passed from Jibri on call
+
+for i in $(find $RECDIR -type f -name '*.mp4'); do
+	scp -i /upload.privkey $i upload@somedestination
+done
+
+# Example for executing a command remotely after upload is complete
+# ssh -4 -i upload.key user@somedestination "nohup /home/user/exec.sh > foo.log 2> foo.err < /dev/null &"
+
 exit 0
 EOF
+chmod +x /upload.sh
+    # End Prepare upload
+
 # End recording configuration
 
 # Add swap and reboot

@@ -23,7 +23,8 @@ For reference check here: <https://github.com/hetznercloud/cli>
 
 __Make sure the lookup for your DNS records works before you proceed.__ Have a big cup of coffee, go for a walk or sleep a night over.
 
-Download the `cloud-init.sh` from this repository and make adjustments as you like.
+Download the `cloud-init.sh` from this repository and make adjustments as you like.  
+Take note about the automatic upload part at the bottom of `cloud-init.sh` and adjust if you plan to use this.  
 Then start the deployment.  
 
 ```bash
