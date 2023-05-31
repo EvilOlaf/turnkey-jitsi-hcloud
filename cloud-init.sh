@@ -55,7 +55,7 @@ echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /et
 apt update
 apt install -y google-chrome-stable
 mkdir -p /etc/opt/chrome/policies/managed
-echo ‘{ “CommandLineFlagSecurityWarningsEnabled”: false }’ >>/etc/opt/chrome/policies/managed/managed_policies.json
+echo ‘{ "CommandLineFlagSecurityWarningsEnabled": false }’ >>/etc/opt/chrome/policies/managed/managed_policies.json
 CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && wget -N http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
 unzip ~/chromedriver_linux64.zip -d ~/
 rm ~/chromedriver_linux64.zip
