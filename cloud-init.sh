@@ -206,14 +206,14 @@ cat > /upload.sh << EOF
 exit 0 # remove this line if you actually want to use this. Also edit private key above
        # and prepare proper(ly isolated/restricted) destination.
 
-RECDIR=$1 # this is being passed from Jibri on call
+RECDIR=\$1 # this is being passed from Jibri on call
 
-for i in $(find $RECDIR -type f -name '*.mp4'); do
-	scp -i /upload.privkey $i upload@somedestination
+for i in \$(find $RECDIR -type f -name '*.mp4'); do
+	scp -i /upload.privkey \$i upload@somedestination:~
 done
 
 # Example for executing a command remotely after upload is complete
-# ssh -4 -i upload.key user@somedestination "nohup /home/user/exec.sh > foo.log 2> foo.err < /dev/null &"
+# ssh -4 -i /upload.privkey user@somedestination "nohup /home/user/exec.sh > foo.log 2> foo.err < /dev/null &"
 
 exit 0
 EOF
