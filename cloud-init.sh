@@ -50,10 +50,12 @@ systemctl restart jitsi-videobridge2
 # Check README.md why I install a new kernel here
 apt install linux-image-generic-hwe-20.04 -y
 echo "snd-aloop" >> /etc/modules
-curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
-echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
-apt update
-apt install -y google-chrome-stable
+#curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
+#echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+#apt update
+#apt install -y google-chrome-stable
+wget https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_114.0.5735.198-1_amd64.deb
+dpkg -i google-chrome-stable_114.0.5735.198-1_amd64.deb
 mkdir -p /etc/opt/chrome/policies/managed
 echo ‘{ "CommandLineFlagSecurityWarningsEnabled": false }’ >>/etc/opt/chrome/policies/managed/managed_policies.json
 CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && wget -N http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
